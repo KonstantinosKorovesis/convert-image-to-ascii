@@ -1,16 +1,26 @@
 from PIL import Image
 import os, sys
+import tkinter as tk
+from tkinter import font
 import numpy as np
+import math
 
-def convert_to_ascii(image_filename = "fullmoon.jpg", char_size = 25):
+def convert_to_ascii(image_filename = "fullmoon.jpg", *args):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
     image = Image.open(image_filename)
     width, height = image.size
 
+    if len(args) == 1:
+        char_size = args[0]
+    else:
+        char_size = height // 100
+    
+    height = height // 2
     grayscale_image = image.convert("L")
-    values = np.array(grayscale_image)
+    resized_grayscale_image = grayscale_image.resize((width, height))
+    values = np.array(resized_grayscale_image)
 
     ascii_chars = []
     row = -1
@@ -23,11 +33,28 @@ def convert_to_ascii(image_filename = "fullmoon.jpg", char_size = 25):
             area_brightness = sum([sum(i) for i in area])
             ascii_chars[row].append(luminance_to_ascii(area_brightness / (len(area) * len(area[0]))))
 
-    
-    with open("output.txt", 'w') as file:
-        for row in ascii_chars:
-            file.write("".join(map(str, row)) + "\n")
-    
+    if os.path.exists(f"{script_dir}\\output.txt"):
+        with open("output.txt", 'w') as file:
+            for row in ascii_chars:
+                file.write("".join(map(str, row)) + "\n")
+
+    display_ascii_image(ascii_chars, math.ceil(width / char_size), math.ceil(height / char_size))
+
+def display_ascii_image(ascii_chars, text_width, text_height):
+    root = tk.Tk()
+    root.title("Image Converted to ASCII")
+    root.geometry(f"+{50}+{50}")
+
+    text = tk.Text(root, width = text_width, height = text_height, xscrollcommand=None, font=('Courier', 10))
+    text.pack()
+
+    for line in ascii_chars:
+        text.insert(tk.END, "".join(map(str, line)) + "\n")
+        if "".join(map(str, line)) == "": print(1)
+
+    text.configure(state="disabled")
+
+    root.mainloop()
 
 def luminance_to_ascii(luminance):
     if luminance <= 25:
@@ -55,7 +82,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         convert_to_ascii(sys.argv[1])
     elif len(sys.argv) == 3:
-        convert_to_ascii(sys.argv[1], sys.argv[2])
+        convert_to_ascii(sys.argv[1], int(sys.argv[2]))
     else:
         # default execution using existing directory image and default character size
         convert_to_ascii()
