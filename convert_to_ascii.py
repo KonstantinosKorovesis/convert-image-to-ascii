@@ -3,7 +3,6 @@ import os, sys
 import tkinter as tk
 from tkinter import font
 import numpy as np
-import math
 
 def convert_to_ascii(image_filename = "fullmoon.jpg", *args):
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,14 +37,14 @@ def convert_to_ascii(image_filename = "fullmoon.jpg", *args):
             for row in ascii_chars:
                 file.write("".join(map(str, row)) + "\n")
 
-    display_ascii_image(ascii_chars, math.ceil(width / char_size), math.ceil(height / char_size))
+    display_ascii_image(ascii_chars)
 
-def display_ascii_image(ascii_chars, text_width, text_height):
+def display_ascii_image(ascii_chars):
     root = tk.Tk()
     root.title("Image Converted to ASCII")
     root.geometry(f"+{50}+{50}")
 
-    text = tk.Text(root, width = text_width, height = text_height, xscrollcommand=None, font=('Courier', 10))
+    text = tk.Text(root, width = len(ascii_chars[0]), height = len(ascii_chars), xscrollcommand=None, font=('Courier', 10))
     text.pack()
 
     for line in ascii_chars:
