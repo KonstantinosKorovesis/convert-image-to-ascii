@@ -4,6 +4,8 @@ Convert an image to ASCII characters. For proper display outside the app, make s
 
 # How to use
 
+Make sure the following libraries are installed: NumPy, Tkinter, Pillow
+
 Run the convert_to_ascii.py file through the command line with two additional arguments:
 - The full path of the image, or just the filename if the image is placed in the same directory as the python file
 - (Optional) An integer representing how many pixels will be included in a single character of the output (e.g. for an input of 10, each character will represent a 10x10 area of pixels in the original image)
